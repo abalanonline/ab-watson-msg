@@ -12,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package info.ab;
@@ -25,6 +24,7 @@ import com.ibm.watson.assistant.v1.model.OutputData;
 import com.ibm.watson.assistant.v1.model.SystemResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,6 +40,9 @@ public class WatsonAssistantController {
 
   private static final String CONVERSATION_ID = UUID.randomUUID().toString();
 
+  @Autowired
+  WatsonRandomText textService;
+
   @PostMapping("/watson/v1/workspaces/{workspaceId}/message")
   public String message(@RequestBody String request) {
 
@@ -48,7 +51,7 @@ public class WatsonAssistantController {
 
     LOGGER.info(request);
     LOGGER.info(response.getInput().getText());
-    final String s = "echo " + response.getInput().getText();
+    final String s = textService.voiceTransformation(textService.getRandomText());
     LOGGER.info(s);
 
     // create output
@@ -74,6 +77,11 @@ public class WatsonAssistantController {
 
     // Watson MessageRequest GsonSingleton workaround
     return GsonSingleton.getGson().toJsonTree(response).getAsJsonObject().toString();
+  }
+
+  @GetMapping(value = "/test/text", produces = "text/plain")
+  public String testText() {
+    return textService.voiceTransformation(textService.getRandomText());
   }
 
   @GetMapping("/authorization/api/v1/token")
