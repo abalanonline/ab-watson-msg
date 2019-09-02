@@ -22,29 +22,13 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.concurrent.ThreadLocalRandom;
 
 @Service
-public class WatsonRandomText {
+public class RandomText {
 
   private final Queue<String> textQueue = new LinkedList<>();
 
   private final RestTemplate restTemplate = new RestTemplate();
-
-  /**
-   * Apply random voice transformation SSML to the string. Supported by IBM Allison, Lisa and Michael voices.
-   *
-   * @param input input text
-   * @return SSML with random voice
-   */
-  public String voiceTransformation(String input) {
-    final ThreadLocalRandom random = ThreadLocalRandom.current();
-    return String.format("<voice-transformation type=\"Custom\" " +
-        "pitch=\"%d%%\" pitch_range=\"%d%%\" glottal_tension=\"%d%%\" breathiness=\"%d%%\" " +
-        "rate=\"%d%%\" timbre=\"%s\" timbre_extent=\"%d%%\">%s</voice-transformation>",
-        random.nextInt(-100, 101), random.nextInt(-100, 101), random.nextInt(-100, 101), random.nextInt(-100, 101),
-        random.nextInt(-100, 101), random.nextBoolean() ? "Sunrise" : "Breeze", random.nextInt(101), input);
-  }
 
   public String getRandomText() {
     if (textQueue.isEmpty()) {

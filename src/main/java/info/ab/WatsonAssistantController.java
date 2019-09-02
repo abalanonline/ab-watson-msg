@@ -31,7 +31,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 public class WatsonAssistantController {
@@ -40,27 +43,46 @@ public class WatsonAssistantController {
 
   private static final String CONVERSATION_ID = UUID.randomUUID().toString();
 
+  public static final Set<String> EMPTY_INPUT = Stream.of("", "vgwHangUp", "vgwPostResponseTimeout").collect(Collectors.toSet());
+
   @Autowired
-  WatsonRandomText textService;
+  private VoiceSsml voiceSsml;
+
+  @Autowired
+  private TalkService talkService;
 
   @PostMapping("/watson/v1/workspaces/{workspaceId}/message")
   public String message(@RequestBody String request) {
 
+    LOGGER.debug(request);
     // Watson MessageRequest is incompatible with Jackson so there is a GsonSingleton with custom type adapters
     MessageRequest response = GsonSingleton.getGsonWithoutPrettyPrinting().fromJson(request, MessageRequest.class);
 
-    LOGGER.info(request);
-    LOGGER.info(response.getInput().getText());
-    final String s = textService.voiceTransformation(textService.getRandomText());
-    LOGGER.info(s);
+    // get input text
+    String inputText = response.getInput().getText();
+    if (!inputText.isEmpty()) {
+      LOGGER.info("i: {}", inputText);
+    }
+    if (EMPTY_INPUT.contains(inputText)) {
+      inputText = "";
+    }
+
+    // perform a text conversation with AI
+    String outputText = talkService.talk(inputText);
+    if (!outputText.isEmpty()) {
+      LOGGER.info("o: {}", outputText);
+    }
+
+    // apply ssml with expression, timbre, whatever
+    outputText = voiceSsml.apply(outputText);
 
     // create output
     final OutputData output = new OutputData();
     final DialogRuntimeResponseGeneric generic = new DialogRuntimeResponseGeneric();
     generic.setResponseType(DialogRuntimeResponseGeneric.ResponseType.TEXT);
-    generic.setText(s);
+    generic.setText(outputText);
     output.setGeneric(Collections.singletonList(generic));
-    output.setText(Collections.singletonList(s));
+    output.setText(Collections.singletonList(outputText));
 
     output.setNodesVisited(Collections.singletonList("Introduction"));
     output.setLogMessages(Collections.emptyList());
@@ -81,7 +103,7 @@ public class WatsonAssistantController {
 
   @GetMapping(value = "/test/text", produces = "text/plain")
   public String testText() {
-    return textService.voiceTransformation(textService.getRandomText());
+    return voiceSsml.apply(talkService.sayNonsense());
   }
 
   @GetMapping("/authorization/api/v1/token")
