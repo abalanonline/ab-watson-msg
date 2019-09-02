@@ -1,2 +1,2 @@
-# ab-watson-kik
-IBM Watson Assistant with Kik messenger
+# ab-watson-msg
+IBM Watson Assistant with messenger
