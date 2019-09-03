@@ -49,7 +49,7 @@ public class WatsonAssistantController {
   private VoiceSsml voiceSsml;
 
   @Autowired
-  private TalkService talkService;
+  private Talker talkerService;
 
   @PostMapping("/watson/v1/workspaces/{workspaceId}/message")
   public String message(@RequestBody String request) {
@@ -67,8 +67,8 @@ public class WatsonAssistantController {
       inputText = "";
     }
 
-    // perform a text conversation with AI
-    String outputText = talkService.talk(inputText);
+    // perform a text conversation with talker service
+    String outputText = inputText.isEmpty() ? "" : talkerService.talk(inputText);
     if (!outputText.isEmpty()) {
       LOGGER.info("o: {}", outputText);
     }
@@ -103,7 +103,7 @@ public class WatsonAssistantController {
 
   @GetMapping(value = "/test/text", produces = "text/plain")
   public String testText() {
-    return voiceSsml.apply(talkService.sayNonsense());
+    return voiceSsml.apply(talkerService.talk("hello"));
   }
 
   @GetMapping("/authorization/api/v1/token")

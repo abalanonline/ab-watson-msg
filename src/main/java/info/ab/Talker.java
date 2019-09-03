@@ -16,26 +16,8 @@
 
 package info.ab;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+public interface Talker {
 
-@Service
-public class TalkService {
-
-  @Autowired
-  private RandomText textService;
-
-  public String sayNonsense() {
-    return textService.getRandomText();
-  }
-
-  public String talk(String inputText) {
-    if (inputText.isEmpty()) {
-      return inputText;
-    }
-
-    // dummy echo response
-    return inputText;
-  }
+  public String talk(String input);
 
 }

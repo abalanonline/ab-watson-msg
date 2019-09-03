@@ -24,7 +24,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 @Service
-public class RandomText {
+public class RandomTalker implements Talker {
 
   private final Queue<String> textQueue = new LinkedList<>();
 
@@ -39,4 +39,10 @@ public class RandomText {
     }
     return textQueue.remove(); // do not want poll() because of its nulls
   }
+
+  @Override
+  public String talk(String input) {
+    return getRandomText();
+  }
+
 }
