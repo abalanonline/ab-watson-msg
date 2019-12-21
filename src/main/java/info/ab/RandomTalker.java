@@ -16,33 +16,44 @@
 
 package info.ab;
 
-import org.springframework.stereotype.Service;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
-@Service
-public class RandomTalker implements Talker {
+@Configuration
+public class RandomTalker {
 
-  private final Queue<String> textQueue = new LinkedList<>();
+  @ConditionalOnMissingBean
+  @Bean
+  public Talker randomTalkerImplementation() {
+    return new RandomTalkerImplementation();
+  }
 
-  private final RestTemplate restTemplate = new RestTemplate();
+  public static class RandomTalkerImplementation implements Talker {
 
-  public String getRandomText() {
-    if (textQueue.isEmpty()) {
-      final String s = restTemplate.getForObject("https://randomtextgenerator.com/", String.class);
-      final int textBegin = s.indexOf('>', s.indexOf("<textarea")) + 1;
-      final int textEnd = s.indexOf('<', textBegin);
-      textQueue.addAll(Arrays.asList(s.substring(textBegin, textEnd).trim().split("[\n\r]+")));
+    private final Queue<String> textQueue = new LinkedList<>();
+
+    private final RestTemplate restTemplate = new RestTemplate();
+
+    public String getRandomText() {
+      if (textQueue.isEmpty()) {
+        final String s = restTemplate.getForObject("https://randomtextgenerator.com/", String.class);
+        final int textBegin = s.indexOf('>', s.indexOf("<textarea")) + 1;
+        final int textEnd = s.indexOf('<', textBegin);
+        textQueue.addAll(Arrays.asList(s.substring(textBegin, textEnd).trim().split("[\n\r]+")));
+      }
+      return textQueue.remove(); // do not want poll() because of its nulls
     }
-    return textQueue.remove(); // do not want poll() because of its nulls
-  }
 
-  @Override
-  public String talk(String input) {
-    return getRandomText();
-  }
+    @Override
+    public String talk(String input) {
+      return getRandomText();
+    }
 
+  }
 }
