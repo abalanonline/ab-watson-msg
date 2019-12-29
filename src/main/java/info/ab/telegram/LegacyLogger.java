@@ -16,29 +16,52 @@
 
 package info.ab.telegram;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Slf4j
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public class LegacyLogger implements org.telegram.mtproto.log.LogInterface, org.telegram.api.engine.LoggerInterface {
+
+  public final String CLASS_NAME = this.getClass().getName();
+
+  private final Set<String> excludedClassNames = Stream.of(CLASS_NAME, "org.telegram.mtproto.log.Logger", "org.telegram.api.engine.Logger").collect(Collectors.toCollection(HashSet::new));
+
+  final Map<String, Logger> loggers = new HashMap<>();
+
+  private Logger getLogger() {
+    StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+    Optional<StackTraceElement> callingClass = Arrays.stream(stackTrace).skip(1).filter(e -> !excludedClassNames.contains(e.getClassName())).findAny();
+    String callingClassName = callingClass.map(StackTraceElement::getClassName).orElse(CLASS_NAME);
+
+    return loggers.computeIfAbsent(callingClassName, LoggerFactory::getLogger);
+  }
 
   @Override
   public void w(String tag, String message) {
-    log.warn("{}: {}", tag, message);
+    getLogger().warn("{}: {}", tag, message);
   }
 
   @Override
   public void d(String tag, String message) {
-    log.debug("{}: {}", tag, message);
+    getLogger().debug("{}: {}", tag, message);
   }
 
   @Override
   public void e(String tag, String message) {
-    log.error("{}: {}", tag, message);
+    getLogger().error("{}: {}", tag, message);
   }
 
   @Override
   public void e(String tag, Throwable t) {
-    log.error(tag, t);
+    getLogger().error(tag, t);
   }
 
 }

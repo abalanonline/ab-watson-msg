@@ -49,7 +49,7 @@ public class TelegramService {
 
   public static final LegacyLogger LEGACY_LOGGER = new LegacyLogger();
 
-  @Value("${telegram.api.key}")
+  @Value("${telegram.api.id}")
   private Integer apiKey;
   @Value("${telegram.api.hash}")
   private String apiHash;
