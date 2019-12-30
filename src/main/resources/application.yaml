@@ -1,0 +1,12 @@
+telegram:
+  api: # https://core.telegram.org/api/obtaining_api_id
+    id: 391152
+    hash: 24dd4e2a02a41b5da140a2940555ce03
+  dc:
+    id: 2
+    host: 149.154.167.40
+    port: 443
+  phoneNumber: 9996621234
+  peerId: 217228545 # @juliechatbot
+ab.ssml: <voice-transformation type="Custom" timbre="Breeze" timbre_extent="60%%">%s</voice-transformation>
+logging.level.org.telegram.bot.kernel.KernelComm: WARN

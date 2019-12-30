@@ -50,7 +50,7 @@ public class MemoryDatabase implements DatabaseManager {
   @Override
   public @Nullable IUser getUserById(int i) {
     IUser user = users.get(i);
-    log.debug("---- user " + i + " => " + (user == null ? null : user.getUserHash()));
+    log.trace("---- user " + i + " => " + (user == null ? null : user.getUserHash()));
     return user;
   }
 
@@ -60,7 +60,7 @@ public class MemoryDatabase implements DatabaseManager {
 
   public void putUser(IUser user) {
     users.put(user.getUserId(), user);
-    log.debug("---- user " + user.getUserId() + " <= " + user.getUserHash());
+    log.trace("---- user " + user.getUserId() + " <= " + user.getUserHash());
   }
 
   @Override

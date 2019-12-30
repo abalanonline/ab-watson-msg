@@ -115,7 +115,7 @@ public class TelegramService {
   }
 
   @SneakyThrows
-  public String request(String input) {
+  synchronized public String request(String input) {
 
     int peerId;
     if (this.peerId == null) {
@@ -133,15 +133,15 @@ public class TelegramService {
     db.getQueue().clear();
 
     IUser iUser = db.getUserById(peerId);
+    Assert.notNull(iUser, "Contact not found");
     service.getKernelComm().sendMessage(iUser, input);
 
     TLMessage output;
     do {
       output = db.getQueue().poll(10, TimeUnit.SECONDS);
+      if (output != null) service.getKernelComm().performMarkAsRead(iUser, output.getId());
     } while (output != null && output.getFromId() != peerId);
 
-    if (output == null) return "";
-    service.getKernelComm().performMarkAsRead(iUser, output.getId());
-    return output.getMessage();
+    return output == null ? "" : output.getMessage();
   }
 }
