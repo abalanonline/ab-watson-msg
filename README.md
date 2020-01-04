@@ -19,7 +19,8 @@ For the first run the application will ask for an sms code, input it in console
 
 the responce will look like this
 ```
-<voice-transformation type="Custom" timbre="Breeze" timbre_extent="60%">Hello, how are you today?</voice-transformation>
+<voice-transformation type="Custom" timbre="Breeze" timbre_extent="60%">
+Hello, how are you today?</voice-transformation>
 ```
 please do not make too many test requests or the chat can be blocked
 * Configure port forwarding and connect to local IP https://www.google.com/search?q=what+is+my+ip
