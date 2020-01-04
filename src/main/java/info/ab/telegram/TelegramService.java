@@ -115,7 +115,7 @@ public class TelegramService {
   }
 
   @SneakyThrows
-  synchronized public String request(String input) {
+  public String request(String input) {
 
     int peerId;
     if (this.peerId == null) {
@@ -138,9 +138,10 @@ public class TelegramService {
 
     TLMessage output;
     do {
-      output = db.getQueue().poll(10, TimeUnit.SECONDS);
-      if (output != null) service.getKernelComm().performMarkAsRead(iUser, output.getId());
+      // in five seconds the system will start sending retries so we will wait no more than three
+      output = db.getQueue().poll(3, TimeUnit.SECONDS);
     } while (output != null && output.getFromId() != peerId);
+    if (output != null) service.getKernelComm().performMarkAsRead(iUser, output.getId());
 
     return output == null ? "" : output.getMessage();
   }
