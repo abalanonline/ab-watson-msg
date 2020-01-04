@@ -31,14 +31,14 @@ http://123.456.789.12:8080/test/text
 
 https://cloud.ibm.com/docs/services/voice-agent?topic=voice-agent-getting-started
 
-* Edit agent:
-* * Service type - Other Watson Assistant service instance
-* * Credential type - User name and password
-* * URL - http://123.456.789.12:8080/
-* * User name - any
-* * Password - any
-* * Workspace ID - any
-* * Text to Speech Voice - en-US_LisaVoice: Lisa: American English female voice
+### Edit agent:
+* Service type - Other Watson Assistant service instance
+* Credential type - User name and password
+* URL - http://123.456.789.12:8080/
+* User name - any
+* Password - any
+* Workspace ID - any
+* Text to Speech Voice - en-US_LisaVoice: Lisa: American English female voice
 
 ### Ready to go.
 Call SIP phone number, talk with Telegram bot and see lines running on the screen.
