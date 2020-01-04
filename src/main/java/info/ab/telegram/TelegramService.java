@@ -21,20 +21,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import org.telegram.api.TLConfig;
-import org.telegram.api.TLDcOption;
 import org.telegram.api.dialog.TLDialog;
-import org.telegram.api.functions.help.TLRequestHelpGetConfig;
 import org.telegram.api.functions.messages.TLRequestMessagesGetDialogs;
 import org.telegram.api.functions.messages.TLRequestMessagesGetPinnedDialogs;
 import org.telegram.api.input.peer.TLInputPeerSelf;
 import org.telegram.api.message.TLMessage;
 import org.telegram.api.messages.TLMessagesPeerDialogs;
 import org.telegram.api.messages.dialogs.TLAbsDialogs;
-import org.telegram.bot.kernel.KernelComm;
 import org.telegram.bot.kernel.TelegramBot;
-import org.telegram.bot.kernel.engine.MemoryApiState;
-import org.telegram.bot.structure.BotConfig;
 import org.telegram.bot.structure.IUser;
 import org.telegram.bot.structure.LoginStatus;
 import org.telegram.tl.TLVector;
@@ -59,13 +53,6 @@ public class TelegramService {
   @Value("${telegram.peerId:#{null}}")
   private Integer peerId;
 
-  @Value("${telegram.dc.id}")
-  private Integer dcId;
-  @Value("${telegram.dc.host}")
-  private String dcHost;
-  @Value("${telegram.dc.port}")
-  private Integer dcPort;
-
   private TelegramBot service;
   private final MemoryDatabase db = new MemoryDatabase();
 
@@ -75,20 +62,7 @@ public class TelegramService {
     org.telegram.mtproto.log.Logger.registerInterface(LEGACY_LOGGER);
     org.telegram.api.engine.Logger.registerInterface(LEGACY_LOGGER);
 
-    BotConfig authConfig = new AuthConfig(phoneNumber);
-    MemoryApiState apiState = new MemoryApiState(authConfig.getAuthfile());
-    //apiState.getObj().getDcInfos().clear();
-    //apiState.getObj().getDcInfos().add(new TLDcInfo(0, dcId, dcHost, dcPort, 0));
-    //apiState.setPrimaryDc(dcId);
-    //apiState.reset(); // will write the file
-
-    KernelComm kernelComm = new KernelComm(apiKey, apiState);
-    kernelComm.init();
-    TLConfig config = kernelComm.getApi().doRpcCallNonAuth(new TLRequestHelpGetConfig());
-    //apiState.getObj().getDcInfos().add(new TLDcInfo(dcOption.getFlags(), dcOption.getId(), dcOption.getIpAddress(), dcOption.getPort(), 0));
-    config.getDcOptions().stream().map(TLDcOption::getIpAddress).forEach(log::info);
-
-    service = new TelegramBot(authConfig, new UpdateBuilder(db), apiKey, apiHash);
+    service = new TelegramBot(new AuthConfig(phoneNumber), new UpdateBuilder(db), apiKey, apiHash);
     // reset loggers back after instantiating TelegramBot
     org.telegram.mtproto.log.Logger.registerInterface(LEGACY_LOGGER);
     org.telegram.api.engine.Logger.registerInterface(LEGACY_LOGGER);

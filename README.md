@@ -17,7 +17,7 @@ For the first run the application will ask for an sms code, input it in console
 ### Testing Telegram
 * Open http://localhost:8080/test/text
 
-the responce will look like this
+the response will look like this
 ```
 <voice-transformation type="Custom" timbre="Breeze" timbre_extent="60%">
 Hello, how are you today?</voice-transformation>
@@ -44,8 +44,10 @@ https://cloud.ibm.com/docs/services/voice-agent?topic=voice-agent-getting-starte
 ### Ready to go.
 Call SIP phone number, talk with Telegram bot and see lines running on the screen.
 ```
+[nio-8080-exec-7] info.ab.WatsonAssistantController: i: hello
+[nio-8080-exec-7] info.ab.WatsonAssistantController: o: Hello, how are you?
+[nio-8080-exec-8] info.ab.WatsonAssistantController: i: I'm good thank you
+[nio-8080-exec-8] info.ab.WatsonAssistantController: o: Pleased to meet you good thank you.
 [nio-8080-exec-4] info.ab.WatsonAssistantController: i: what is your name
 [nio-8080-exec-4] info.ab.WatsonAssistantController: o: My name is Julie.
-[nio-8080-exec-6] info.ab.WatsonAssistantController: i: what time is it
-[nio-8080-exec-6] info.ab.WatsonAssistantController: o: The time is 10:43 in Montreal.
 ```
