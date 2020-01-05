@@ -35,7 +35,7 @@ https://cloud.ibm.com/docs/services/voice-agent?topic=voice-agent-getting-starte
 ### Edit agent:
 * Service type - Other Watson Assistant service instance
 * Credential type - User name and password
-* URL - http://123.456.789.12:8080/
+* URL - http://123.456.789.12:8080/watson
 * User name - any
 * Password - any
 * Workspace ID - any
